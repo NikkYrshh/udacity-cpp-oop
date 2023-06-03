@@ -21,38 +21,41 @@ You need to properly format the uptime. Refer to the comments mentioned in forma
 Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() { 
-    auto pid_arr = LinuxParser::Pids();
 
-  std::unordered_set<int> curr_pids(pid_arr.begin(), pid_arr.end());
-
-    for (auto iter = processes_.begin(); iter != processes_.end();) {
-        if (curr_pids.count(iter->Pid())) {
-            iter->Update();
-            ++iter;
-        } else {
-            iter = processes_.erase(iter);
-        }
+vector<Process>& System::Processes() {
+    set<int> no_repeat;
+    for (Process process : processes_) {
+        no_repeat.insert(process.Pid());
     }
-
-    for (const auto& pid : pid_arr) {
-        bool found = false;
-        for (const auto& proc : processes_) {
-            if (proc.Pid() == pid) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            Process process(pid);
-            processes_.emplace_back(process);
-        }
+    std::vector<int> pids = LinuxParser::Pids();
+    for (int pid: pids) {
+        if (no_repeat.find(pid) == no_repeat.end()) {
+            processes_.emplace_back(Process(pid));
     }
+}for (Process& process: processes_) {
+        process.CpuUtilization();
+  }
+    std::sort(processes_.begin(), processes_.end(), std::greater<Process>());
 
-    std::sort(processes_.begin(), processes_.end());
-
-    return processes_;
+    return processes_; 
 }
+// vector<Process>& System::Processes() {
+//   set<int> no_repeat;
+//   for (Process process : processes_) {
+//     no_repeat.insert(process.Pid());
+//   }
+//   std::vector<int> pids = LinuxParser::Pids();
+//   for (int pid: pids) {
+//     if (no_repeat.find(pid) == no_repeat.end()) {
+//       processes_.emplace_back(Process(pid));
+//     }
+//   }
+//   for (Process& process: processes_) {
+//     process.CpuUtilization();
+//   }
+//   std::sort(processes_.begin(), processes_.end(), std::greater<>());
+//   return processes_;
+// }
 
 
 

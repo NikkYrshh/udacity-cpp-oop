@@ -50,40 +50,40 @@ string LinuxParser::Kernel() {
 }
 
 // BONUS: Update this to use std::filesystem
-// vector<int> LinuxParser::Pids() {
-//   vector<int> pids;
-//   DIR* directory = opendir(kProcDirectory.c_str());
-//   struct dirent* file;
-//   while ((file = readdir(directory)) != nullptr) {
-//     // Is this a directory?
-//     if (file->d_type == DT_DIR) {
-//       // Is every character of the name a digit?
-//       string filename(file->d_name);
-//       if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-//         int pid = stoi(filename);
-//         pids.push_back(pid);
-//       }
-//     }
-//   }
-//   closedir(directory);
-//   return pids;
-// }
-
-std::vector<int> LinuxParser::Pids() {
-    std::vector<int> pids;
-    for (const auto &entry : std::filesystem::directory_iterator(kProcDirectory)) {
-        // Is this a directory?
-        if (entry.is_directory()) {
-            // Is every character of the name a digit?
-            std::string filename = entry.path().filename();
-            if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-                int pid = std::stoi(filename);
-                pids.push_back(pid);
-            }
-        }
+vector<int> LinuxParser::Pids() {
+  vector<int> pids;
+  DIR* directory = opendir(kProcDirectory.c_str());
+  struct dirent* file;
+  while ((file = readdir(directory)) != nullptr) {
+    // Is this a directory?
+    if (file->d_type == DT_DIR) {
+      // Is every character of the name a digit?
+      string filename(file->d_name);
+      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        int pid = stoi(filename);
+        pids.push_back(pid);
+      }
     }
-    return pids;
+  }
+  closedir(directory);
+  return pids;
 }
+
+// std::vector<int> LinuxParser::Pids() {
+//     std::vector<int> pids;
+//     for (const auto &entry : std::filesystem::directory_iterator(kProcDirectory)) {
+//         // Is this a directory?
+//         if (entry.is_directory()) {
+//             // Is every character of the name a digit?
+//             std::string filename = entry.path().filename();
+//             if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+//                 int pid = std::stoi(filename);
+//                 pids.push_back(pid);
+//             }
+//         }
+//     }
+//     return pids;
+// }
 
 
 // TODO: Read and return the system memory utilization
