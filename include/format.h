@@ -5,7 +5,7 @@
 
 namespace Format {
 std::string ConvertTime(const long time);
-  std::string ElapsedTime(const long times);  // TODO: See src/format.cpp
+  std::string ElapsedTime(const long times);  
 };                                    // namespace Format
 
 #endif
